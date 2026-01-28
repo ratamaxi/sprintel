@@ -15,11 +15,10 @@ interface MeshSpec {
 
 @Component({
   selector: 'app-productos',
-  standalone: true,
-  imports: [CommonModule, AppRoutingModule],
+  imports: [CommonModule],
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class ProductosComponent {
   // --- UI state ---

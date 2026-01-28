@@ -1,9 +1,7 @@
-<div class="home">
+<div class="contact-page">
   <header class="topbar">
     <div class="brand">
-      <div class="brand__icon">
-        <span></span>
-      </div>
+      <div class="brand__icon"><span></span></div>
       <div class="brand__text">
         <strong>SPRINTEL</strong>
         <span>Telas Metálicas</span>
@@ -20,95 +18,70 @@
     <div class="contacts">
       <div class="contact">
         <span class="contact__icon">📞</span>
-        <span>11 1234-5678</span>
-      </div>
-      <div class="contact">
-        <span class="contact__icon">📞</span>
-        <span>11 1234-5678</span>
+        <span>{{ phoneDisplay }}</span>
       </div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero__content">
-      <p class="hero__eyebrow">TELAS METÁLICAS</p>
-      <h1>DE CALIDAD</h1>
-      <p class="hero__subtitle">
-        Fabricación y venta de tejidos metálicos para todo tipo de aplicaciones.
-      </p>
-      <button class="primary-button">VER PRODUCTOS</button>
-      <div class="hero__dots">
-        <span></span>
-        <span class="active"></span>
-        <span></span>
-      </div>
-    </div>
-  </section>
+  <main class="wrap">
+    <section class="cover" aria-label="Imagen de cabecera">
+  <div class="cover__overlay"></div>
+  <div class="cover__content">
+    <p class="cover__kicker">CONTACTO</p>
+    <h1 class="cover__title">Hablemos</h1>
+    <p class="cover__subtitle">WhatsApp, email y horarios de atención.</p>
+  </div>
+</section>
 
-  <section class="features">
-    <article>
-      <div class="feature__icon">⚙️</div>
-      <h3>Montaje de rapidez</h3>
-      <p>Fabricamos y vendemos telas metálicas a todo el país con rapidez y eficiencia.</p>
-    </article>
-    <article>
-      <div class="feature__icon">🎧</div>
-      <h3>Asesoramiento profesional</h3>
-      <p>Contamos con venta de expertos para brindar el mejor asesoramiento a sus proyectos.</p>
-    </article>
-    <article>
-      <div class="feature__icon">✅</div>
-      <h3>Calidad garantizada</h3>
-      <p>Nuestros productos están hechos con los mejores materiales para asegurar durabilidad.</p>
-    </article>
-  </section>
+    <section class="grid">
+      <article class="card">
+        <h2>Canales de contacto</h2>
 
-  <section class="welcome">
-    <div class="welcome__text">
-      <p class="section-tag">BIENVENIDOS A <span>SPRINTEL</span></p>
-      <h2>Telas metálicas</h2>
-      <p>
-        Sprintel es su socio de confianza en la fabricación y venta de telas metálicas. Con más de 25 años
-        de experiencia en el mercado, nos especializamos en soluciones de alta calidad para la industria,
-        la construcción y la agroindustria.
-      </p>
-      <p>
-        Trabajamos con los mejores materiales y tecnología adecuada para brindar productos duraderos y
-        eficientes para diversas aplicaciones.
-      </p>
-      <button class="secondary-button">MÁS SOBRE NOSOTROS</button>
-    </div>
-    <div class="welcome__media">
-      <div class="welcome__image"></div>
-      <div class="welcome__tabs">
-        <span class="active">Malla mosquitera</span>
-        <span>Telas metálicas</span>
-        <span>Malla electrosoldada</span>
-      </div>
-    </div>
-  </section>
+        <div class="item">
+          <div class="icon">💬</div>
+          <div class="txt">
+            <div class="label">WhatsApp</div>
+            <a class="value" [href]="whatsappLink" target="_blank" rel="noopener">
+              {{ phoneDisplay }}
+            </a>
+            <div class="hint">Click para abrir WhatsApp</div>
+          </div>
+        </div>
 
-  <section class="experience">
-    <div class="experience__text">
-      <h2>Más de <strong>25</strong> años brindando soluciones en telas metálicas en Argentina</h2>
-      <button class="primary-button">CONOCENOS MÁS</button>
-    </div>
-    <div class="experience__images">
-      <div class="experience__image large"></div>
-      <div class="experience__image small"></div>
-    </div>
-  </section>
+        <div class="item">
+          <div class="icon">✉️</div>
+          <div class="txt">
+            <div class="label">Email</div>
+            <a class="value" [href]="mailtoLink">{{ email }}</a>
+            <div class="hint">Te respondemos a la brevedad</div>
+          </div>
+        </div>
 
-  <section class="reasons">
-    <div class="reasons__content">
-      <h2>¿Por qué elegirnos?</h2>
-      <ul>
-        <li>Larga trayectoria en el mercado.</li>
-        <li>Productos de alta calidad.</li>
-        <li>Atención personalizada y asesoramiento.</li>
-        <li>Envíos a todo el país.</li>
-      </ul>
-    </div>
-    <div class="reasons__image"></div>
-  </section>
+        <div class="item">
+          <div class="icon">📍</div>
+          <div class="txt">
+            <div class="label">Atención</div>
+            <div class="value">Argentina</div>
+            <div class="hint">Envíos a todo el país</div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card card--soft">
+        <h2>Horarios</h2>
+
+        <div class="hours">
+          <div class="row" *ngFor="let h of horario">
+            <div class="day">{{ h.dia }}</div>
+            <div class="time">{{ h.hora }}</div>
+          </div>
+        </div>
+
+        <div class="note">
+          Si necesitás cotización, contanos: <strong>tipo de malla</strong>, <strong>Ø de alambre</strong>,
+          <strong>ancho</strong> y material (<strong>AISI 304/316</strong>).
+        </div>
+      </aside>
+    </section>
+  </main>
 </div>
