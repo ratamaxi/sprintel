@@ -1,0 +1,104 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  background: #f5f6fb;
+  border-bottom: 1px solid #d7dbe7;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #1a2d5a;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.brand__icon span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #1a2d5a;
+  position: relative;
+}
+
+.brand__icon span::before,
+.brand__icon span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 2px;
+  background: #1a2d5a;
+  transform: translate(-50%, -50%);
+}
+
+.brand__icon span::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.brand__text strong {
+  display: block;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #1a2d5a;
+}
+
+.brand__text span {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #5c657c;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-weight: 500;
+  color: #1d2333;
+}
+
+.nav a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.nav a.active::after,
+.nav a:hover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #1f4fa3;
+}
+
+.contacts {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 600;
+  color: #1a2d5a;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}

@@ -1,27 +1,6 @@
 <div class="contact-page">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand__icon"><span></span></div>
-      <div class="brand__text">
-        <strong>SPRINTEL</strong>
-        <span>Telas Metálicas</span>
-      </div>
-    </div>
+   <app-navbar></app-navbar>
 
-    <nav class="nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-      <a routerLink="/quienes-somos" routerLinkActive="active">Quiénes Somos</a>
-      <a routerLink="/productos" routerLinkActive="active">Productos</a>
-      <a routerLink="/contacto" routerLinkActive="active">Contacto</a>
-    </nav>
-
-    <div class="contacts">
-      <div class="contact">
-        <span class="contact__icon">📞</span>
-        <span>{{ phoneDisplay }}</span>
-      </div>
-    </div>
-  </header>
 
   <main class="wrap">
     <section class="cover" aria-label="Imagen de cabecera">

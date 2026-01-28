@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppRoutingModule } from "../app-routing.module";
+import { AppRoutingModule } from "../../app-routing.module";
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 type TipoTejido = 'Lisa' | 'Twill' | 'Reps';
 
@@ -15,7 +16,7 @@ interface MeshSpec {
 
 @Component({
   selector: 'app-productos',
-  imports: [CommonModule],
+  imports: [CommonModule,NavbarComponent],
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.scss'],
   standalone: true,
