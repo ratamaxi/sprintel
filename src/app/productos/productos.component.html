@@ -1,0 +1,247 @@
+<main class="page">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__overlay"></div>
+
+    <div class="container hero__content">
+      <p class="hero__kicker">Productos</p>
+      <h1 class="hero__title">
+        Telas metálicas <span>de calidad</span>
+      </h1>
+      <p class="hero__subtitle">
+        {{ producto.nombre }} — <strong>{{ producto.subtitulo }}</strong>
+      </p>
+
+      <div class="hero__cta">
+        <button class="btn btn--primary" (click)="setTab('especificaciones')">Ver especificaciones</button>
+        <button class="btn btn--ghost" (click)="setTab('descripcion')">Descripción</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section class="strip">
+    <div class="container strip__grid">
+      <div class="strip__item">
+        <div class="strip__icon">⚙️</div>
+        <div class="strip__title">Fabricación a medida</div>
+        <div class="strip__text">Te ayudamos a elegir malla + Ø de alambre según tu necesidad.</div>
+      </div>
+
+      <div class="strip__item">
+        <div class="strip__icon">🧪</div>
+        <div class="strip__title">Uso industrial</div>
+        <div class="strip__text">Filtrado, tamizado, zarandeo, protección y contención.</div>
+      </div>
+
+      <div class="strip__item">
+        <div class="strip__icon">✅</div>
+        <div class="strip__title">Acero inoxidable</div>
+        <div class="strip__text">Opciones AISI 304 / 316 con anchos estándar disponibles.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <section class="section">
+<div class="container grid">
+      <!-- CARD PRINCIPAL -->
+      <article class="card">
+        <header class="card__header">
+          <div>
+            <h2 class="card__title">{{ producto.nombre }}</h2>
+            <p class="card__subtitle">{{ producto.subtitulo }}</p>
+          </div>
+
+          <div class="badges">
+            <span class="badge" *ngFor="let m of producto.materiales">{{ m }}</span>
+          </div>
+        </header>
+
+        <!-- TABS -->
+        <nav class="tabs" role="tablist" aria-label="Secciones del producto">
+          <button class="tab" [class.is-active]="activeTab() === 'descripcion'" (click)="setTab('descripcion')">
+            Descripción
+          </button>
+          <button class="tab" [class.is-active]="activeTab() === 'especificaciones'" (click)="setTab('especificaciones')">
+            Especificaciones
+          </button>
+          <button class="tab" [class.is-active]="activeTab() === 'usos'" (click)="setTab('usos')">
+            Usos comunes
+          </button>
+        </nav>
+
+        <!-- TAB: DESCRIPCIÓN -->
+        <section class="card__body" *ngIf="activeTab() === 'descripcion'">
+          <p class="lead">
+            {{ producto.descripcion }}
+          </p>
+
+          <div class="info-grid">
+            <div class="info">
+              <div class="info__label">Anchos disponibles</div>
+              <div class="info__value">
+                <span class="pill" *ngFor="let a of producto.anchosDisponiblesMm">{{ a }} mm</span>
+              </div>
+            </div>
+
+            <div class="info">
+              <div class="info__label">Cómo pedir presupuesto</div>
+              <div class="info__value">
+                Indicá <strong>número de malla</strong>, <strong>Ø de alambre</strong>, <strong>ancho</strong> y material (304/316).
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="callout__title">Tip rápido</div>
+            <div class="callout__text">
+              Usá el buscador de la tabla para encontrar tu malla y copiar los valores de Ø, luz y área abierta.
+            </div>
+            <button class="btn btn--primary" (click)="setTab('especificaciones')">Ir a la tabla</button>
+          </div>
+        </section>
+
+        <!-- TAB: ESPECIFICACIONES -->
+        <section class="card__body" *ngIf="activeTab() === 'especificaciones'">
+          <div class="filters">
+            <div class="field">
+              <label class="label">Tipo de tejido</label>
+              <div class="segmented">
+                <button class="seg" [class.is-active]="filtroTipo() === 'Todos'" (click)="setTipo('Todos')">Todos</button>
+                <button class="seg" [class.is-active]="filtroTipo() === 'Lisa'" (click)="setTipo('Lisa')">Lisa</button>
+                <button class="seg" [class.is-active]="filtroTipo() === 'Twill'" (click)="setTipo('Twill')">Twill</button>
+                <button class="seg" [class.is-active]="filtroTipo() === 'Reps'" (click)="setTipo('Reps')">Reps</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Buscar</label>
+              <input
+                class="input"
+                type="text"
+                placeholder="Ej: 14, 0.6, 0.158, 12/90..."
+                [value]="filtroTexto()"
+                (input)="onBuscar(($any($event.target).value))"
+              />
+              <div class="hint">
+                Mostrando <strong>{{ filteredSpecs().length }}</strong> de <strong>{{ totalSpecs }}</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap" role="region" aria-label="Tabla de especificaciones" tabindex="0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Malla</th>
+                  <th>Ø alambre (mm)</th>
+                  <th>Luz (mm)</th>
+                  <th>Área abierta (%)</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let r of filteredSpecs()">
+                  <td><span class="chip" [class.is-twill]="r.tipo === 'Twill'" [class.is-reps]="r.tipo === 'Reps'">{{ r.tipo }}</span></td>
+                  <td class="mono">{{ r.malla }}</td>
+                  <td class="mono">{{ r.diametroMm }}</td>
+                  <td class="mono">{{ r.luzMm }}</td>
+                  <td class="mono">{{ r.areaAbiertaPct || '—' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note">
+            * En algunos casos (Reps/Twill) la tabla fuente no incluye “malla” estándar o “área abierta”.
+          </div>
+        </section>
+
+        <!-- TAB: USOS -->
+        <section class="card__body" *ngIf="activeTab() === 'usos'">
+          <div class="two-col">
+            <div>
+              <h3 class="h3">Aplicaciones típicas</h3>
+              <ul class="checklist">
+                <li>Filtrado de líquidos y gases</li>
+                <li>Tamizado de polvos</li>
+                <li>Zarandeo de materiales a granel</li>
+                <li>Contención / separación</li>
+                <li>Protección y resguardo</li>
+              </ul>
+
+              <h3 class="h3">Qué información necesitás definir</h3>
+              <ul class="bullets">
+                <li>Material (AISI 304 o 316)</li>
+                <li>Ancho requerido (1000 / 1220 / 1300 / 1600 mm)</li>
+                <li>Número de malla y Ø de alambre</li>
+              </ul>
+            </div>
+
+            <div class="mini-card">
+              <div class="mini-card__title">¿Querés que lo armemos con vos?</div>
+              <div class="mini-card__text">
+                Escribí la consulta con tu malla y el ancho: te devolvemos una recomendación / presupuesto.
+              </div>
+              <button class="btn btn--primary"  routerLink="/contacto">
+                Pedir presupuesto
+              </button>
+            </div>
+          </div>
+        </section>
+      </article>
+
+      <!-- SIDEBAR: GALERÍA (scroll automático) -->
+<aside class="card gallery">
+  <header class="card__header">
+    <div>
+      <h2 class="card__title">Galería</h2>
+      <p class="card__subtitle">Ejemplos de productos / aplicaciones</p>
+    </div>
+  </header>
+
+  <div class="card__body">
+    <div class="gallery__viewport" aria-label="Galería de imágenes con scroll automático">
+      <div class="gallery__track">
+        <!-- set 1 -->
+        <figure class="gallery__item" *ngFor="let img of galleryImages">
+          <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
+          <figcaption class="gallery__caption">{{ img.title }}</figcaption>
+        </figure>
+
+        <!-- set 2 (duplicado para loop infinito) -->
+        <figure class="gallery__item" *ngFor="let img of galleryImages">
+          <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
+          <figcaption class="gallery__caption">{{ img.title }}</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <p class="gallery__hint">Tip: al pasar el mouse, el scroll se pausa.</p>
+  </div>
+</aside>
+
+
+    </div>
+  </section>
+
+  <!-- BANDA FINAL -->
+  <section class="band">
+    <div class="container band__grid">
+      <div>
+        <h2 class="band__title">¿Necesitás asesoramiento?</h2>
+        <p class="band__text">Te ayudamos a seleccionar la malla ideal según el trabajo a realizar.</p>
+      </div>
+      <div class="band__actions">
+        <button class="btn btn--ghostOnDark" (click)="setTab('descripcion')">
+          Ir al formulario
+        </button>
+        <button class="btn btn--primaryOnDark" (click)="setTab('especificaciones')">
+          Ver tabla
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
