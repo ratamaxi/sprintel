@@ -1,35 +1,77 @@
 <div class="home">
   <app-navbar></app-navbar>
 
-  <section class="hero">
+  <!-- HERO CAROUSEL -->
+  <section class="hero" (mouseenter)="pause()" (mouseleave)="resume()">
+    <!-- Slides -->
+    <div class="hero__slides">
+      <div
+        class="hero__slide"
+        *ngFor="let slide of slides; let i = index"
+        [class.is-active]="i === currentIndex"
+        [style.backgroundImage]="'linear-gradient(rgba(20, 32, 58, 0.8), rgba(20, 32, 58, 0.8)), url(' + slide.image + ')'"
+        role="img"
+        [attr.aria-label]="slide.alt"
+      ></div>
+    </div>
+
+    <!-- Arrows -->
+    <button
+      type="button"
+      class="hero__arrow hero__arrow--left"
+      (click)="prev()"
+      aria-label="Imagen anterior"
+    >
+      ‹
+    </button>
+
+    <button
+      type="button"
+      class="hero__arrow hero__arrow--right"
+      (click)="nextManual()"
+      aria-label="Imagen siguiente"
+    >
+      ›
+    </button>
+
+    <!-- Content overlay -->
     <div class="hero__content">
-      <p class="hero__eyebrow">TELAS METÁLICAS</p>
-      <h1>DE CALIDAD</h1>
-      <p class="hero__subtitle">
-        Fabricación y venta de tejidos metálicos para todo tipo de aplicaciones.
-      </p>
-      <button class="primary-button">VER PRODUCTOS</button>
-      <div class="hero__dots">
-        <span></span>
-        <span class="active"></span>
-        <span></span>
+      <p class="hero__eyebrow">{{ slides[currentIndex].eyebrow }}</p>
+      <h1>{{ slides[currentIndex].title }}</h1>
+      <p class="hero__subtitle">{{ slides[currentIndex].subtitle }}</p>
+
+      <button routerLink="/productos" class="primary-button">
+        VER PRODUCTOS
+      </button>
+
+      <!-- Dots -->
+      <div class="hero__dots" role="tablist" aria-label="Carrusel">
+        <button
+          type="button"
+          *ngFor="let _ of slides; let i = index"
+          class="dot"
+          [class.active]="i === currentIndex"
+          (click)="goTo(i)"
+          [attr.aria-label]="'Ir a slide ' + (i + 1)"
+          [attr.aria-selected]="i === currentIndex"
+        ></button>
       </div>
     </div>
   </section>
 
   <section class="features">
     <article>
-        <img class="icon" src="../../assets/icon/ajustes.png">
+      <img class="icon" src="../../assets/icon/ajustes.png" alt="Icono ajustes" />
       <h3>Montaje de rapidez</h3>
       <p>Fabricamos y vendemos telas metálicas a todo el país con rapidez y eficiencia.</p>
     </article>
     <article>
-        <img class="icon" src="../../assets/icon/auricular.png">
+      <img class="icon" src="../../assets/icon/auricular.png" alt="Icono asesoramiento" />
       <h3>Asesoramiento profesional</h3>
       <p>Contamos con venta de expertos para brindar el mejor asesoramiento a sus proyectos.</p>
     </article>
     <article>
-        <img class="icon" src="../../assets/icon/calidad.png">
+      <img class="icon" src="../../assets/icon/calidad.png" alt="Icono calidad" />
       <h3>Calidad garantizada</h3>
       <p>Nuestros productos están hechos con los mejores materiales para asegurar durabilidad.</p>
     </article>
@@ -48,8 +90,9 @@
         Trabajamos con los mejores materiales y tecnología adecuada para brindar productos duraderos y
         eficientes para diversas aplicaciones.
       </p>
-      <button class="secondary-button">MÁS SOBRE NOSOTROS</button>
+      <button routerLink="/quienes-somos" class="secondary-button">MÁS SOBRE NOSOTROS</button>
     </div>
+
     <div class="welcome__media">
       <div class="welcome__image"></div>
       <div class="welcome__tabs">
