@@ -1,5 +1,7 @@
+<!-- productos.component.html -->
 <main class="page">
   <app-navbar></app-navbar>
+
   <!-- HERO -->
   <section class="hero">
     <div class="hero__overlay"></div>
@@ -10,7 +12,7 @@
         Telas metálicas <span>de calidad</span>
       </h1>
       <p class="hero__subtitle">
-        {{ producto.nombre }} — <strong>{{ producto.subtitulo }}</strong>
+        {{ productoActual().nombre }} — <strong>{{ productoActual().subtitulo }}</strong>
       </p>
 
       <div class="hero__cta">
@@ -24,19 +26,19 @@
   <section class="strip">
     <div class="container strip__grid">
       <div class="strip__item">
-        <img class="icon" src="../../assets/icon/ajustes.png">
+        <img class="icon" src="../../assets/icon/ajustes.png" />
         <div class="strip__title">Fabricación a medida</div>
         <div class="strip__text">Te ayudamos a elegir malla + Ø de alambre según tu necesidad.</div>
       </div>
 
       <div class="strip__item">
-        <img class="icon" src="../../assets/icon/fabrica.png">
+        <img class="icon" src="../../assets/icon/fabrica.png" />
         <div class="strip__title">Uso industrial</div>
         <div class="strip__text">Filtrado, tamizado, zarandeo, protección y contención.</div>
       </div>
 
       <div class="strip__item">
-        <img class="icon" src="../../assets/icon/viga-de-acero.png">
+        <img class="icon" src="../../assets/icon/viga-de-acero.png" />
         <div class="strip__title">Acero inoxidable</div>
         <div class="strip__text">Opciones AISI 304 / 316 con anchos estándar disponibles.</div>
       </div>
@@ -45,19 +47,41 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <section class="section">
-<div class="container grid">
+    <div class="container grid">
       <!-- CARD PRINCIPAL -->
       <article class="card">
         <header class="card__header">
           <div>
-            <h2 class="card__title">{{ producto.nombre }}</h2>
-            <p class="card__subtitle">{{ producto.subtitulo }}</p>
+            <h2 class="card__title">{{ productoActual().nombre }}</h2>
+            <p class="card__subtitle">{{ productoActual().subtitulo }}</p>
           </div>
 
           <div class="badges">
-            <span class="badge" *ngFor="let m of producto.materiales">{{ m }}</span>
+            <span class="badge" *ngFor="let m of productoActual().materiales">{{ m }}</span>
           </div>
         </header>
+
+        <!-- PRODUCT PICKER -->
+        <div class="card__body product-picker">
+          <div class="product-picker__grid">
+            <button
+              class="product-card"
+              *ngFor="let p of productos"
+              type="button"
+              [class.is-active]="selectedProductoKey() === p.key"
+              (click)="selectProducto(p.key)"
+            >
+              <div class="product-card__text">
+                <div class="product-card__title">{{ p.title }}</div>
+                <div class="product-card__sub">{{ p.subtitle }}</div>
+              </div>
+
+              <div class="product-card__media">
+                <img class="product-card__img" [src]="p.img" [alt]="p.title" loading="lazy" />
+              </div>
+            </button>
+          </div>
+        </div>
 
         <!-- TABS -->
         <nav class="tabs" role="tablist" aria-label="Secciones del producto">
@@ -75,14 +99,14 @@
         <!-- TAB: DESCRIPCIÓN -->
         <section class="card__body" *ngIf="activeTab() === 'descripcion'">
           <p class="lead">
-            {{ producto.descripcion }}
+            {{ productoActual().descripcion }}
           </p>
 
           <div class="info-grid">
             <div class="info">
               <div class="info__label">Anchos disponibles</div>
               <div class="info__value">
-                <span class="pill" *ngFor="let a of producto.anchosDisponiblesMm">{{ a }} mm</span>
+                <span class="pill" *ngFor="let a of productoActual().anchosDisponiblesMm">{{ a }} mm</span>
               </div>
             </div>
 
@@ -95,9 +119,11 @@
           </div>
 
           <div class="callout">
-            <div class="callout__title">Tip rápido</div>
-            <div class="callout__text">
-              Usá el buscador de la tabla para encontrar tu malla y copiar los valores de Ø, luz y área abierta.
+            <div>
+              <div class="callout__title">Tip rápido</div>
+              <div class="callout__text">
+                Usá el buscador de la tabla para encontrar tu malla y copiar los valores de Ø, luz y área abierta.
+              </div>
             </div>
             <button class="btn btn--primary" (click)="setTab('especificaciones')">Ir a la tabla</button>
           </div>
@@ -126,7 +152,7 @@
                 (input)="onBuscar(($any($event.target).value))"
               />
               <div class="hint">
-                Mostrando <strong>{{ filteredSpecs().length }}</strong> de <strong>{{ totalSpecs }}</strong>.
+                Mostrando <strong>{{ filteredSpecs().length }}</strong> de <strong>{{ totalSpecs() }}</strong>.
               </div>
             </div>
           </div>
@@ -145,7 +171,11 @@
 
               <tbody>
                 <tr *ngFor="let r of filteredSpecs()">
-                  <td><span class="chip" [class.is-twill]="r.tipo === 'Twill'" [class.is-reps]="r.tipo === 'Reps'">{{ r.tipo }}</span></td>
+                  <td>
+                    <span class="chip" [class.is-twill]="r.tipo === 'Twill'" [class.is-reps]="r.tipo === 'Reps'">
+                      {{ r.tipo }}
+                    </span>
+                  </td>
                   <td class="mono">{{ r.malla }}</td>
                   <td class="mono">{{ r.diametroMm }}</td>
                   <td class="mono">{{ r.luzMm }}</td>
@@ -166,11 +196,7 @@
             <div>
               <h3 class="h3">Aplicaciones típicas</h3>
               <ul class="checklist">
-                <li>Filtrado de líquidos y gases</li>
-                <li>Tamizado de polvos</li>
-                <li>Zarandeo de materiales a granel</li>
-                <li>Contención / separación</li>
-                <li>Protección y resguardo</li>
+                <li *ngFor="let u of productoActual().usos">{{ u }}</li>
               </ul>
 
               <h3 class="h3">Qué información necesitás definir</h3>
@@ -186,7 +212,7 @@
               <div class="mini-card__text">
                 Escribí la consulta con tu malla y el ancho: te devolvemos una recomendación / presupuesto.
               </div>
-              <button class="btn btn--primary"  routerLink="/contacto">
+              <button class="btn btn--primary" routerLink="/contacto">
                 Pedir presupuesto
               </button>
             </div>
@@ -194,37 +220,33 @@
         </section>
       </article>
 
-      <!-- SIDEBAR: GALERÍA (scroll automático) -->
-<aside class="card gallery">
-  <header class="card__header">
-    <div>
-      <h2 class="card__title">Galería</h2>
-      <p class="card__subtitle">Ejemplos de productos / aplicaciones</p>
-    </div>
-  </header>
+      <!-- SIDEBAR: GALERÍA -->
+      <aside class="card gallery">
+        <header class="card__header">
+          <div>
+            <h2 class="card__title">Galería</h2>
+            <p class="card__subtitle">Ejemplos de productos / aplicaciones</p>
+          </div>
+        </header>
 
-  <div class="card__body">
-    <div class="gallery__viewport" aria-label="Galería de imágenes con scroll automático">
-      <div class="gallery__track">
-        <!-- set 1 -->
-        <figure class="gallery__item" *ngFor="let img of galleryImages">
-          <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
-          <figcaption class="gallery__caption">{{ img.title }}</figcaption>
-        </figure>
+        <div class="card__body">
+          <div class="gallery__viewport" aria-label="Galería de imágenes con scroll automático">
+            <div class="gallery__track">
+              <figure class="gallery__item" *ngFor="let img of galleryImages">
+                <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
+                <figcaption class="gallery__caption">{{ img.title }}</figcaption>
+              </figure>
 
-        <!-- set 2 (duplicado para loop infinito) -->
-        <figure class="gallery__item" *ngFor="let img of galleryImages">
-          <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
-          <figcaption class="gallery__caption">{{ img.title }}</figcaption>
-        </figure>
-      </div>
-    </div>
+              <figure class="gallery__item" *ngFor="let img of galleryImages">
+                <img class="gallery__img" [src]="img.src" [alt]="img.alt" loading="lazy" />
+                <figcaption class="gallery__caption">{{ img.title }}</figcaption>
+              </figure>
+            </div>
+          </div>
 
-    <p class="gallery__hint">Tip: al pasar el mouse, el scroll se pausa.</p>
-  </div>
-</aside>
-
-
+          <p class="gallery__hint">Tip: al pasar el mouse, el scroll se pausa.</p>
+        </div>
+      </aside>
     </div>
   </section>
 
@@ -236,12 +258,8 @@
         <p class="band__text">Te ayudamos a seleccionar la malla ideal según el trabajo a realizar.</p>
       </div>
       <div class="band__actions">
-        <button class="btn btn--ghostOnDark" (click)="setTab('descripcion')">
-          Ir al formulario
-        </button>
-        <button class="btn btn--primaryOnDark" (click)="setTab('especificaciones')">
-          Ver tabla
-        </button>
+        <button class="btn btn--ghostOnDark" (click)="setTab('descripcion')">Volver a descripción</button>
+        <button class="btn btn--primaryOnDark" (click)="setTab('especificaciones')">Ver tabla</button>
       </div>
     </div>
   </section>

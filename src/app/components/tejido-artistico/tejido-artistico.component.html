@@ -1,0 +1,43 @@
+<div class="art">
+  <div class="filters">
+    <div class="field">
+      <label class="label">Buscar</label>
+      <input
+        class="input"
+        type="text"
+        placeholder="Ej: 20 x 20, 2,5, 6..."
+        [value]="filtroTexto()"
+        (input)="onBuscar(($any($event.target).value))"
+      />
+      <div class="hint">
+        Mostrando <strong>{{ filtered().length }}</strong> de <strong>{{ total() }}</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap" role="region" aria-label="Tabla de tejido artístico" tabindex="0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Luz libre (mm)</th>
+          <th>Ø alambre (mm)</th>
+          <th>Ancho máx (m)</th>
+          <th>Peso (kg/m²)</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let r of filtered()">
+          <td class="mono">{{ r.luzLibre }}</td>
+          <td class="mono">{{ r.diametro }}</td>
+          <td class="mono">{{ r.anchoMax }}</td>
+          <td class="mono">{{ r.peso }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    * Si alguna fila aparece con “—”, es porque en el HTML copiado desde la web ese valor no venía visible en el bloque que se pudo leer.
+  </div>
+</div>
