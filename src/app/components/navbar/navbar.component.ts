@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, HostListener, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -8,8 +7,21 @@ import { RouterModule } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   standalone: true,
-  imports:[CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule],
 })
 export class NavbarComponent {
+  isOpen = signal(false);
 
+  toggleMenu() {
+    this.isOpen.update(v => !v);
+  }
+
+  closeMenu() {
+    this.isOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.closeMenu();
+  }
 }

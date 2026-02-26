@@ -9,6 +9,7 @@
     </div>
   </div>
 
+  <!-- Nav desktop -->
   <nav class="nav">
     <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
     <a routerLink="/quienes-somos" routerLinkActive="active">Quiénes Somos</a>
@@ -26,4 +27,38 @@
       <span>11 1234-5678</span>
     </div>
   </div>
+
+  <!-- Botón hamburguesa (solo mobile) -->
+  <button
+    class="burger"
+    type="button"
+    [class.is-open]="isOpen()"
+    (click)="toggleMenu()"
+    aria-label="Abrir menú"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </header>
+
+<!-- Overlay menú móvil -->
+<div class="mobile-backdrop" [class.is-visible]="isOpen()" (click)="closeMenu()"></div>
+
+<nav class="mobile-nav" [class.is-open]="isOpen()">
+  <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Inicio</a>
+  <a routerLink="/quienes-somos" routerLinkActive="active" (click)="closeMenu()">Quiénes Somos</a>
+  <a routerLink="/productos" routerLinkActive="active" (click)="closeMenu()">Productos</a>
+  <a routerLink="/contacto" routerLinkActive="active" (click)="closeMenu()">Contacto</a>
+
+  <div class="mobile-nav__contacts">
+    <div class="contact">
+      <span class="contact__icon">📞</span>
+      <span>11 1234-5678</span>
+    </div>
+    <div class="contact">
+      <span class="contact__icon">📞</span>
+      <span>11 1234-5678</span>
+    </div>
+  </div>
+</nav>

@@ -3,15 +3,23 @@ import { Component, computed, signal } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { TejidoArtisticoComponent } from 'src/app/components/tejido-artistico/tejido-artistico.component';
 
-type ProductoKey = 'inox' | 'artistico';
-type TipoTejido = 'Lisa' | 'Twill' | 'Reps';
+type ProductoKey = 'telas' | 'artistico' | 'disco' | 'packs' | 'zarandas';
+type TipoMalla =
+  | 'AISI 304'
+  | 'AISI 316 / 316L'
+  | 'Reps'
+  | 'Acero negro'
+  | 'Especiales 304';
 
 interface MeshSpecInox {
-  tipo: TipoTejido;
-  malla: string;       // ej: "14" o "12/90"
-  diametroMm: string;  // ej: "0.6" o "0.40/0.3"
-  luzMm: string;       // ej: "1.21" o "0.012"
+  tipo: TipoMalla;
+  malla: string;
+  diametroMm: string;
+  luzMm: string;
   areaAbiertaPct?: string;
+  pesoKgM2?: string;
+  filtradoAbsolutouM?: string;
+  filtradoNominaluM?: string;
 }
 
 @Component({
@@ -24,14 +32,14 @@ interface MeshSpecInox {
 export class ProductosComponent {
   // ---------------- UI ----------------
   activeTab = signal<'descripcion' | 'especificaciones' | 'usos'>('descripcion');
-  selectedProductoKey = signal<ProductoKey>('inox');
+  selectedProductoKey = signal<ProductoKey>('telas');
 
   // Selector visual (cards con imagen)
   readonly productos = [
     {
-      key: 'inox' as const,
-      title: 'Acero inoxidable',
-      subtitle: 'Telas metálicas AISI 304 / 316',
+      key: 'telas' as const,
+      title: 'Telas metálicas',
+      subtitle: 'Acero inoxidable AISI 304 / 316',
       img: '../../assets/img/img1.jpeg',
     },
     {
@@ -40,16 +48,31 @@ export class ProductosComponent {
       subtitle: 'Decoración / arquitectura',
       img: '../../assets/img/img6.jpg',
     },
+    {
+      key: 'disco' as const,
+      title: 'Discos filtrantes',
+      subtitle: 'Stock permanente, todos los diámetros',
+      img: '../../assets/img/img7.jpg',
+    },
+    {
+      key: 'packs' as const,
+      title: 'Packos filtrantes',
+      subtitle: 'Filtración industrial multicapa',
+      img: '../../assets/img/img8.png',
+    },
+    {
+      key: 'zarandas' as const,
+      title: 'Zarandas clasificatorias',
+      subtitle: 'Fabricadas a medida en largo y ancho',
+      img: '../../assets/img/img9.png',
+    },
   ];
 
   selectProducto(key: ProductoKey) {
     this.selectedProductoKey.set(key);
-
-    // opcional: cuando cambiás de producto, te manda a descripción
     this.activeTab.set('descripcion');
 
-    // opcional: reseteo filtros si volvés a inox
-    if (key === 'inox') {
+    if (key === 'telas') {
       this.filtroTipo.set('Todos');
       this.filtroTexto.set('');
     }
@@ -59,8 +82,8 @@ export class ProductosComponent {
     this.activeTab.set(tab);
   }
 
-  // ---------------- DATA INOX ----------------
-  readonly productoInox = {
+  // ---------------- DATA PRODUCTOS ----------------
+  readonly productoTelas = {
     nombre: 'Telas metálicas de acero inoxidable',
     subtitulo: 'AISI 304 / 316',
     descripcion:
@@ -76,7 +99,6 @@ export class ProductosComponent {
     ],
   };
 
-  // ---------------- DATA ARTÍSTICO (solo header/descr/usos; la tabla está en TejidoArtisticoComponent) ----------------
   readonly productoArtistico = {
     nombre: 'Tejido artístico',
     subtitulo: 'Decoración / arquitectura',
@@ -87,85 +109,144 @@ export class ProductosComponent {
     usos: ['Fachadas', 'Cielorrasos', 'Divisores', 'Revestimientos', 'Decoración'],
   };
 
-  // Esto alimenta el HERO + cards + tabs para ambos productos
+  readonly productoDisco = {
+    nombre: 'Discos filtrantes',
+    subtitulo: 'Stock permanente, todos los diámetros',
+    descripcion:
+      'Contamos con un gran stock de matrices para cortes de discos para extrusión, de todos los diámetros. Son utilizados en diversas industrias y fabricados en planta industrial propia. Consulte por fabricación en medidas especiales.',
+    anchosDisponiblesMm: ['Todos los diámetros'],
+    materiales: ['AISI 304', 'AISI 316'],
+    usos: [
+      'Extrusión industrial',
+      'Filtrado en línea de proceso',
+      'Diversas industrias (alimenticia, química, plásticos)',
+      'Medidas estándar y especiales a pedido',
+    ],
+  };
+
+  readonly productoPacks = {
+    nombre: 'Packos filtrantes',
+    subtitulo: 'Filtración industrial multicapa',
+    descripcion:
+      'Los packos filtrantes son sistemas de filtración compuestos por múltiples capas de mallas metálicas precisamente ensambladas para proporcionar una filtración progresiva y altamente eficiente. Esta configuración en capas permite capturar partículas de diferentes tamaños, optimizando el proceso de filtración y extendiendo la vida útil del sistema. Contamos con un gran stock de matrices para cortes de discos para extrusión, de distintos diámetros. También armamos packos de telas envueltos con aro de aluminio o soldados por punto.',
+    anchosDisponiblesMm: ['Consultar'],
+    materiales: ['AISI 304', 'AISI 316'],
+    usos: [
+      'Filtración progresiva multicapa',
+      'Extrusión industrial (cortes de disco)',
+      'Procesos con requerimientos de alta presión',
+      'Configuraciones con aro de aluminio o soldadura por punto',
+      'Soluciones estándar y personalizadas',
+    ],
+  };
+
+  readonly productoZarandas = {
+    nombre: 'Zarandas clasificatorias',
+    subtitulo: 'Fabricadas a medida en largo y ancho',
+    descripcion:
+      'Fabricadas con alambre de aleación de acero que resiste la abrasión y el desgaste prematuro. Se proveen a medida en largo y ancho, y pueden ser fabricadas con o sin borde de sujeción, recubierto o no de chapa. Son utilizadas en diversas industrias y fabricadas en planta industrial.',
+    anchosDisponiblesMm: ['A medida'],
+    materiales: ['Aleación de acero'],
+    usos: [
+      'Clasificación y separación de materiales a granel',
+      'Minería y canteras',
+      'Industria de la construcción',
+      'Áridos y granulados',
+      'Reciclado de materiales',
+      'Industria alimenticia y agroindustrial',
+    ],
+  };
+
   readonly productoActual = computed(() => {
-    return this.selectedProductoKey() === 'inox' ? this.productoInox : this.productoArtistico;
+    const key = this.selectedProductoKey();
+    switch (key) {
+      case 'telas':     return this.productoTelas;
+      case 'artistico': return this.productoArtistico;
+      case 'disco':     return this.productoDisco;
+      case 'packs':     return this.productoPacks;
+      case 'zarandas':  return this.productoZarandas;
+    }
   });
 
   // ---------------- TABLA INOX (filtros + tabla en productos) ----------------
-  filtroTipo = signal<TipoTejido | 'Todos'>('Todos');
+  filtroTipo = signal<TipoMalla | 'Todos'>('Todos');
   filtroTexto = signal<string>('');
 
-  // ✅ PEGÁ ACÁ TU ARRAY GIGANTE DE INOX (tal cual lo tenías)
   readonly specsInox: MeshSpecInox[] = [
-        { tipo: 'Lisa', malla: '2', diametroMm: '1.65', luzMm: '11.05', areaAbiertaPct: '75.7' },
-        { tipo: 'Lisa', malla: '3', diametroMm: '1.5', luzMm: '6.97', areaAbiertaPct: '67.71' },
-        { tipo: 'Lisa', malla: '4', diametroMm: '1.2', luzMm: '5.15', areaAbiertaPct: '65.78' },
-        { tipo: 'Lisa', malla: '5', diametroMm: '1', luzMm: '4.08', areaAbiertaPct: '64.5' },
-        { tipo: 'Lisa', malla: '6', diametroMm: '0.9', luzMm: '3.33', areaAbiertaPct: '62' },
-        { tipo: 'Lisa', malla: '7', diametroMm: '0.8', luzMm: '2.83', areaAbiertaPct: '60.77' },
-        { tipo: 'Lisa', malla: '8', diametroMm: '0.8', luzMm: '2.38', areaAbiertaPct: '55.96' },
-        { tipo: 'Lisa', malla: '8', diametroMm: '1', luzMm: '2.18', areaAbiertaPct: '46.93' },
-        { tipo: 'Lisa', malla: '10', diametroMm: '0.6', luzMm: '1.94', areaAbiertaPct: '58.34' },
-        { tipo: 'Lisa', malla: '10', diametroMm: '1', luzMm: '1.54', areaAbiertaPct: '36.76' },
-        { tipo: 'Lisa', malla: '12', diametroMm: '0.6', luzMm: '1.52', areaAbiertaPct: '51.34' },
-        { tipo: 'Lisa', malla: '12', diametroMm: '0.7', luzMm: '1.42', areaAbiertaPct: '44.8' },
-        { tipo: 'Lisa', malla: '14', diametroMm: '0.35', luzMm: '1.46', areaAbiertaPct: '65.14' },
-        { tipo: 'Lisa', malla: '14', diametroMm: '0.5', luzMm: '1.31', areaAbiertaPct: '52.48' },
-        { tipo: 'Lisa', malla: '14', diametroMm: '0.6', luzMm: '1.21', areaAbiertaPct: '44.88' },
-        { tipo: 'Lisa', malla: '16', diametroMm: '0.4', luzMm: '1.19', areaAbiertaPct: '55.96' },
-        { tipo: 'Lisa', malla: '16', diametroMm: '0.6', luzMm: '0.99', areaAbiertaPct: '38.69' },
-        { tipo: 'Lisa', malla: '18', diametroMm: '0.4', luzMm: '1.01', areaAbiertaPct: '51.34' },
-        { tipo: 'Lisa', malla: '18', diametroMm: '0.5', luzMm: '0.91', areaAbiertaPct: '41.69' },
-        { tipo: 'Lisa', malla: '20', diametroMm: '0.3', luzMm: '0.97', areaAbiertaPct: '58.34' },
-        { tipo: 'Lisa', malla: '20', diametroMm: '0.41', luzMm: '0.86', areaAbiertaPct: '45.86' },
-        { tipo: 'Lisa', malla: '25', diametroMm: '0.16', luzMm: '0.86', areaAbiertaPct: '70.98' },
-        { tipo: 'Lisa', malla: '25', diametroMm: '0.3', luzMm: '0.72', areaAbiertaPct: '49.66' },
-        { tipo: 'Lisa', malla: '25', diametroMm: '0.35', luzMm: '0.67', areaAbiertaPct: '42.97' },
-        { tipo: 'Lisa', malla: '30', diametroMm: '0.18', luzMm: '0.67', areaAbiertaPct: '62' },
-        { tipo: 'Lisa', malla: '30', diametroMm: '0.25', luzMm: '0.6', areaAbiertaPct: '49.66' },
-        { tipo: 'Lisa', malla: '30', diametroMm: '0.3', luzMm: '0.55', areaAbiertaPct: '41.69' },
-        { tipo: 'Lisa', malla: '40', diametroMm: '0.2', luzMm: '0.44', areaAbiertaPct: '46.93' },
-        { tipo: 'Lisa', malla: '40', diametroMm: '0.24', luzMm: '0.4', areaAbiertaPct: '38.69' },
-        { tipo: 'Twill', malla: '—', diametroMm: '0.25', luzMm: '0.39', areaAbiertaPct: '36.76' },
-        { tipo: 'Twill', malla: '—', diametroMm: '0.25', luzMm: '0.26', areaAbiertaPct: '25.79' },
-        { tipo: 'Twill', malla: '—', diametroMm: '0.2', luzMm: '0.22', areaAbiertaPct: '27.83' },
-        { tipo: 'Twill', malla: '—', diametroMm: '0.16', luzMm: '0.158', areaAbiertaPct: '24.61' },
-        { tipo: 'Lisa', malla: '45', diametroMm: '0.2', luzMm: '0.36', areaAbiertaPct: '41.69' },
-        { tipo: 'Lisa', malla: '45', diametroMm: '0.25', luzMm: '0.31', areaAbiertaPct: '31.03' },
-        { tipo: 'Lisa', malla: '50', diametroMm: '0.2', luzMm: '0.31', areaAbiertaPct: '36.76' },
-        { tipo: 'Lisa', malla: '50', diametroMm: '0.23', luzMm: '0.28', areaAbiertaPct: '29.95' },
-        { tipo: 'Lisa', malla: '60', diametroMm: '0.17', luzMm: '0.25', areaAbiertaPct: '35.81' },
-        { tipo: 'Lisa', malla: '70', diametroMm: '0.15', luzMm: '0.21', areaAbiertaPct: '34.41' },
-        { tipo: 'Lisa', malla: '80', diametroMm: '0.12', luzMm: '0.198', areaAbiertaPct: '38.69' },
-        { tipo: 'Lisa', malla: '80', diametroMm: '0.14', luzMm: '0.178', areaAbiertaPct: '31.25' },
-        { tipo: 'Lisa', malla: '100', diametroMm: '0.1', luzMm: '0.154', areaAbiertaPct: '36.76' },
-        { tipo: 'Lisa', malla: '120', diametroMm: '0.09', luzMm: '0.122', areaAbiertaPct: '33.04' },
-        { tipo: 'Lisa', malla: '150', diametroMm: '0.065', luzMm: '0.104', areaAbiertaPct: '37.96' },
-        { tipo: 'Lisa', malla: '180', diametroMm: '0.05', luzMm: '0.091', areaAbiertaPct: '41.69' },
-        { tipo: 'Lisa', malla: '200', diametroMm: '0.05', luzMm: '0.077', areaAbiertaPct: '36.76' },
-        { tipo: 'Lisa', malla: '230', diametroMm: '0.04', luzMm: '0.07', areaAbiertaPct: '40.68' },
-        { tipo: 'Lisa', malla: '250', diametroMm: '0.04', luzMm: '0.062', areaAbiertaPct: '36.76' },
-        { tipo: 'Lisa', malla: '300', diametroMm: '0.035', luzMm: '0.05', areaAbiertaPct: '34.41' },
-        { tipo: 'Lisa', malla: '325', diametroMm: '0.035', luzMm: '0.043', areaAbiertaPct: '30.49' },
-        { tipo: 'Lisa', malla: '350', diametroMm: '0.035', luzMm: '0.038', areaAbiertaPct: '26.8' },
-        { tipo: 'Lisa', malla: '400', diametroMm: '0.03', luzMm: '0.034', areaAbiertaPct: '27.83' },
-        { tipo: 'Lisa', malla: '500', diametroMm: '0.025', luzMm: '0.026', areaAbiertaPct: '25.79' },
-        { tipo: 'Reps', malla: '12/90', diametroMm: '0.40/0.3', luzMm: '0.25' },
-        { tipo: 'Reps', malla: '24/110', diametroMm: '0.36/0.25', luzMm: '0.125' },
-        { tipo: 'Reps', malla: '30/150', diametroMm: '0.18/0.14', luzMm: '0.1' },
-        { tipo: 'Reps', malla: '50/250', diametroMm: '0.14/0.12', luzMm: '0.063' },
-        { tipo: 'Reps', malla: '80/700', diametroMm: '0.06/0.05', luzMm: '0.04' },
-        { tipo: 'Reps', malla: '200/1400', diametroMm: '0.05/0.03', luzMm: '0.012' },
-      ]
+    // --- AISI 304 ---
+    { tipo: 'AISI 304', malla: '2',   diametroMm: '1.60',  luzMm: '11.10', areaAbiertaPct: '76.39', pesoKgM2: '2.47' },
+    { tipo: 'AISI 304', malla: '3',   diametroMm: '1.50',  luzMm: '6.97',  areaAbiertaPct: '67.71', pesoKgM2: '3.24' },
+    { tipo: 'AISI 304', malla: '4',   diametroMm: '1.20',  luzMm: '5.15',  areaAbiertaPct: '65.78', pesoKgM2: '2.77' },
+    { tipo: 'AISI 304', malla: '5',   diametroMm: '1.00',  luzMm: '4.08',  areaAbiertaPct: '64.50', pesoKgM2: '2.43' },
+    { tipo: 'AISI 304', malla: '6',   diametroMm: '0.90',  luzMm: '3.33',  areaAbiertaPct: '62.00', pesoKgM2: '2.36' },
+    { tipo: 'AISI 304', malla: '7',   diametroMm: '0.80',  luzMm: '2.83',  areaAbiertaPct: '60.77', pesoKgM2: '2.17' },
+    { tipo: 'AISI 304', malla: '8',   diametroMm: '0.80',  luzMm: '2.38',  areaAbiertaPct: '55.96', pesoKgM2: '2.47' },
+    { tipo: 'AISI 304', malla: '8',   diametroMm: '1.00',  luzMm: '2.18',  areaAbiertaPct: '46.93', pesoKgM2: '3.91' },
+    { tipo: 'AISI 304', malla: '10',  diametroMm: '0.50',  luzMm: '2.04',  areaAbiertaPct: '64.50', pesoKgM2: '1.19' },
+    { tipo: 'AISI 304', malla: '10',  diametroMm: '0.60',  luzMm: '1.94',  areaAbiertaPct: '58.34', pesoKgM2: '1.69' },
+    { tipo: 'AISI 304', malla: '10',  diametroMm: '0.70',  luzMm: '1.84',  areaAbiertaPct: '52.48', pesoKgM2: '2.29' },
+    { tipo: 'AISI 304', malla: '10',  diametroMm: '1.00',  luzMm: '1.54',  areaAbiertaPct: '36.76', pesoKgM2: '4.80' },
+    { tipo: 'AISI 304', malla: '12',  diametroMm: '0.40',  luzMm: '1.72',  areaAbiertaPct: '65.78', pesoKgM2: '0.90' },
+    { tipo: 'AISI 304', malla: '12',  diametroMm: '0.60',  luzMm: '1.52',  areaAbiertaPct: '51.34', pesoKgM2: '2.05' },
+    { tipo: 'AISI 304', malla: '12',  diametroMm: '0.70',  luzMm: '1.42',  areaAbiertaPct: '44.80', pesoKgM2: '2.71' },
+    { tipo: 'AISI 304', malla: '14',  diametroMm: '0.35',  luzMm: '1.46',  areaAbiertaPct: '65.14', pesoKgM2: '0.80' },
+    { tipo: 'AISI 304', malla: '14',  diametroMm: '0.50',  luzMm: '1.31',  areaAbiertaPct: '52.48', pesoKgM2: '1.66' },
+    { tipo: 'AISI 304', malla: '14',  diametroMm: '0.60',  luzMm: '1.21',  areaAbiertaPct: '44.80', pesoKgM2: '2.37' },
+    { tipo: 'AISI 304', malla: '16',  diametroMm: '0.60',  luzMm: '0.99',  areaAbiertaPct: '38.69', pesoKgM2: '2.71' },
+    { tipo: 'AISI 304', malla: '18',  diametroMm: '0.50',  luzMm: '0.91',  areaAbiertaPct: '41.69', pesoKgM2: '2.14' },
+    { tipo: 'AISI 304', malla: '20',  diametroMm: '0.30',  luzMm: '0.97',  areaAbiertaPct: '58.34', pesoKgM2: '0.84' },
+    { tipo: 'AISI 304', malla: '20',  diametroMm: '0.41',  luzMm: '0.86',  areaAbiertaPct: '45.86', pesoKgM2: '1.67' },
+    { tipo: 'AISI 304', malla: '20',  diametroMm: '0.50',  luzMm: '0.77',  areaAbiertaPct: '36.76', pesoKgM2: '2.44' },
+    { tipo: 'AISI 304', malla: '25',  diametroMm: '0.30',  luzMm: '0.72',  areaAbiertaPct: '49.66', pesoKgM2: '1.08' },
+    { tipo: 'AISI 304', malla: '25',  diametroMm: '0.35',  luzMm: '0.67',  areaAbiertaPct: '42.97', pesoKgM2: '1.48' },
+    { tipo: 'AISI 304', malla: '30',  diametroMm: '0.25',  luzMm: '0.60',  areaAbiertaPct: '49.66', pesoKgM2: '0.86' },
+    { tipo: 'AISI 304', malla: '30',  diametroMm: '0.30',  luzMm: '0.55',  areaAbiertaPct: '41.69', pesoKgM2: '1.34' },
+    { tipo: 'AISI 304', malla: '35',  diametroMm: '0.25',  luzMm: '0.48',  areaAbiertaPct: '42.97', pesoKgM2: '1.05' },
+    { tipo: 'AISI 304', malla: '40',  diametroMm: '0.20',  luzMm: '0.44',  areaAbiertaPct: '46.93', pesoKgM2: '0.80' },
+    { tipo: 'AISI 304', malla: '40',  diametroMm: '0.25',  luzMm: '0.39',  areaAbiertaPct: '36.76', pesoKgM2: '1.19' },
+    { tipo: 'AISI 304', malla: '45',  diametroMm: '0.20',  luzMm: '0.36',  areaAbiertaPct: '41.69', pesoKgM2: '0.90' },
+    { tipo: 'AISI 304', malla: '45',  diametroMm: '0.25',  luzMm: '0.31',  areaAbiertaPct: '31.03', pesoKgM2: '1.29' },
+    { tipo: 'AISI 304', malla: '50',  diametroMm: '0.20',  luzMm: '0.31',  areaAbiertaPct: '36.76', pesoKgM2: '1.00' },
+    { tipo: 'AISI 304', malla: '60',  diametroMm: '0.17',  luzMm: '0.25',  areaAbiertaPct: '35.81', pesoKgM2: '0.88' },
+    { tipo: 'AISI 304', malla: '70',  diametroMm: '0.15',  luzMm: '0.21',  areaAbiertaPct: '34.41', pesoKgM2: '0.80' },
+    { tipo: 'AISI 304', malla: '80',  diametroMm: '0.12',  luzMm: '0.20',  areaAbiertaPct: '38.69', pesoKgM2: '0.58' },
+    { tipo: 'AISI 304', malla: '80',  diametroMm: '0.14',  luzMm: '0.18',  areaAbiertaPct: '31.25', pesoKgM2: '0.79' },
+    { tipo: 'AISI 304', malla: '100', diametroMm: '0.10',  luzMm: '0.15',  areaAbiertaPct: '36.76', pesoKgM2: '0.51' },
+    { tipo: 'AISI 304', malla: '120', diametroMm: '0.09',  luzMm: '0.12',  areaAbiertaPct: '33.04', pesoKgM2: '0.49' },
+    { tipo: 'AISI 304', malla: '150', diametroMm: '0.06',  luzMm: '0.11',  areaAbiertaPct: '41.69', pesoKgM2: '0.29' },
+    { tipo: 'AISI 304', malla: '200', diametroMm: '0.05',  luzMm: '0.08',  areaAbiertaPct: '36.76', pesoKgM2: '0.28' },
+    // --- AISI 316 / 316L ---
+    { tipo: 'AISI 316 / 316L', malla: '230', diametroMm: '0.040', luzMm: '0.0704', areaAbiertaPct: '4.49',  pesoKgM2: '0.1859' },
+    { tipo: 'AISI 316 / 316L', malla: '250', diametroMm: '0.040', luzMm: '0.0616', areaAbiertaPct: '3.73',  pesoKgM2: '0.2020' },
+    { tipo: 'AISI 316 / 316L', malla: '300', diametroMm: '0.040', luzMm: '0.0447', areaAbiertaPct: '2.36',  pesoKgM2: '0.2425' },
+    { tipo: 'AISI 316 / 316L', malla: '325', diametroMm: '0.035', luzMm: '0.0432', areaAbiertaPct: '2.38',  pesoKgM2: '0.2011' },
+    { tipo: 'AISI 316 / 316L', malla: '350', diametroMm: '0.035', luzMm: '0.0376', areaAbiertaPct: '1.95',  pesoKgM2: '0.2166' },
+    { tipo: 'AISI 316 / 316L', malla: '400', diametroMm: '0.028', luzMm: '0.0355', areaAbiertaPct: '1.98',  pesoKgM2: '0.1584' },
+    { tipo: 'AISI 316 / 316L', malla: '500', diametroMm: '0.025', luzMm: '0.0258', areaAbiertaPct: '1.31',  pesoKgM2: '0.1578' },
+    // --- Reps (Tejido holandés) ---
+    { tipo: 'Reps', malla: '12/90',    diametroMm: '0.40/0.30', luzMm: '—', filtradoAbsolutouM: '270–300', filtradoNominaluM: '211', pesoKgM2: '2.46' },
+    { tipo: 'Reps', malla: '24/110',   diametroMm: '0.36/0.25', luzMm: '—', filtradoAbsolutouM: '115–128', filtradoNominaluM: '110', pesoKgM2: '2.39' },
+    { tipo: 'Reps', malla: '30/150',   diametroMm: '0.25/0.18', luzMm: '—', filtradoAbsolutouM: '90–105',  filtradoNominaluM: '90',  pesoKgM2: '1.7009' },
+    { tipo: 'Reps', malla: '30/150 316L', diametroMm: '0.25/0.18', luzMm: '—', filtradoAbsolutouM: '90–105', filtradoNominaluM: '90', pesoKgM2: '1.7009' },
+    { tipo: 'Reps', malla: '50/250',   diametroMm: '0.14/0.12', luzMm: '—', filtradoAbsolutouM: '52–57',   filtradoNominaluM: '55',  pesoKgM2: '1.0115' },
+    { tipo: 'Reps', malla: '80/700',   diametroMm: '0.11/0.08', luzMm: '—', filtradoAbsolutouM: '35–44',   filtradoNominaluM: '35',  pesoKgM2: '1.3759' },
+    { tipo: 'Reps', malla: '200/1400', diametroMm: '0.07/0.04', luzMm: '—', filtradoAbsolutouM: '12–14',   filtradoNominaluM: '10',  pesoKgM2: '0.8132' },
+    // --- Acero negro ---
+    { tipo: 'Acero negro', malla: '12/90',  diametroMm: '0.40/0.30', luzMm: '—', filtradoAbsolutouM: '270–300', filtradoNominaluM: '211', pesoKgM2: '2.50' },
+    { tipo: 'Acero negro', malla: '24/110', diametroMm: '0.35/0.25', luzMm: '—', filtradoAbsolutouM: '115–128', filtradoNominaluM: '110', pesoKgM2: '2.27' },
+    // --- Especiales AISI 304 ---
+    { tipo: 'Especiales 304', malla: '2',   diametroMm: '1.25', luzMm: '2.00', areaAbiertaPct: '81.28', pesoKgM2: '6.13' },
+    { tipo: 'Especiales 304', malla: '2.5', diametroMm: '1.25', luzMm: '2.50', areaAbiertaPct: '76.91', pesoKgM2: '5.53' },
+    { tipo: 'Especiales 304', malla: '3',   diametroMm: '1.25', luzMm: '3.00', areaAbiertaPct: '72.65', pesoKgM2: '4.88' },
+    { tipo: 'Especiales 304', malla: '3',   diametroMm: '1.50', luzMm: '3.00', areaAbiertaPct: '67.72', pesoKgM2: '7.02' },
+  ]
 
   readonly totalSpecs = computed(() => {
-    // Solo tiene sentido mostrar contador en inox (artistico lo maneja su componente)
-    return this.selectedProductoKey() === 'inox' ? this.specsInox.length : 0;
+    return this.selectedProductoKey() === 'telas' ? this.specsInox.length : 0;
   });
 
   readonly filteredSpecs = computed(() => {
-    if (this.selectedProductoKey() !== 'inox') return [];
+    if (this.selectedProductoKey() !== 'telas') return [];
 
     const tipo = this.filtroTipo();
     const q = this.filtroTexto().trim().toLowerCase();
@@ -176,15 +257,17 @@ export class ProductosComponent {
 
       if (!q) return true;
 
-      const hay = [row.tipo, row.malla, row.diametroMm, row.luzMm, row.areaAbiertaPct ?? '']
-        .join(' ')
-        .toLowerCase();
+      const hay = [
+        row.tipo, row.malla, row.diametroMm, row.luzMm,
+        row.areaAbiertaPct ?? '', row.pesoKgM2 ?? '',
+        row.filtradoAbsolutouM ?? '', row.filtradoNominaluM ?? '',
+      ].join(' ').toLowerCase();
 
       return hay.includes(q);
     });
   });
 
-  setTipo(tipo: TipoTejido | 'Todos') {
+  setTipo(tipo: TipoMalla | 'Todos') {
     this.filtroTipo.set(tipo);
   }
 
@@ -194,10 +277,10 @@ export class ProductosComponent {
 
   // ---------------- GALERÍA (sidebar) ----------------
   readonly galleryImages = [
-    { src: '../../assets/img/img1.jpeg', alt: 'Producto 01', title: 'Detalle 01' },
-    { src: '../../assets/img/img2.jpeg', alt: 'Producto 02', title: 'Detalle 02' },
-    { src: '../../assets/img/img3.jpeg', alt: 'Producto 03', title: 'Detalle 03' },
-    { src: '../../assets/img/img4.jpeg', alt: 'Producto 04', title: 'Detalle 04' },
-    { src: '../../assets/img/img5.jpeg', alt: 'Producto 05', title: 'Detalle 05' },
+    { src: '../../assets/img/img1.jpeg', alt: 'Producto 01', title: 'Telas Metálicas' },
+    { src: '../../assets/img/img2.jpeg', alt: 'Producto 02', title: 'Rollo de Tejido metálico' },
+    { src: '../../assets/img/img8.png', alt: 'Producto 03', title: 'Pacokos' },
+    { src: '../../assets/img/img7.jpg', alt: 'Producto 04', title: 'Discos Filtrantes' },
+    { src: '../../assets/img/img9.png', alt: 'Producto 05', title: 'Zarandas' },
   ];
 }

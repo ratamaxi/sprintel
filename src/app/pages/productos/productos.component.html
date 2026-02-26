@@ -45,6 +45,29 @@
     </div>
   </section>
 
+  <!-- PRODUCT PICKER -->
+  <section class="picker-section">
+    <div class="container">
+      <div class="picker-grid">
+        <button
+          class="product-card"
+          *ngFor="let p of productos"
+          type="button"
+          [class.is-active]="selectedProductoKey() === p.key"
+          (click)="selectProducto(p.key)"
+        >
+          <div class="product-card__media">
+            <img class="product-card__img" [src]="p.img" [alt]="p.title" loading="lazy" />
+          </div>
+          <div class="product-card__text">
+            <div class="product-card__title">{{ p.title }}</div>
+            <div class="product-card__sub">{{ p.subtitle }}</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTENIDO PRINCIPAL -->
   <section class="section">
     <div class="container grid">
@@ -60,28 +83,6 @@
             <span class="badge" *ngFor="let m of productoActual().materiales">{{ m }}</span>
           </div>
         </header>
-
-        <!-- PRODUCT PICKER -->
-        <div class="card__body product-picker">
-          <div class="product-picker__grid">
-            <button
-              class="product-card"
-              *ngFor="let p of productos"
-              type="button"
-              [class.is-active]="selectedProductoKey() === p.key"
-              (click)="selectProducto(p.key)"
-            >
-              <div class="product-card__text">
-                <div class="product-card__title">{{ p.title }}</div>
-                <div class="product-card__sub">{{ p.subtitle }}</div>
-              </div>
-
-              <div class="product-card__media">
-                <img class="product-card__img" [src]="p.img" [alt]="p.title" loading="lazy" />
-              </div>
-            </button>
-          </div>
-        </div>
 
         <!-- TABS -->
         <nav class="tabs" role="tablist" aria-label="Secciones del producto">
@@ -131,63 +132,181 @@
 
         <!-- TAB: ESPECIFICACIONES -->
         <section class="card__body" *ngIf="activeTab() === 'especificaciones'">
-          <div class="filters">
-            <div class="field">
-              <label class="label">Tipo de tejido</label>
-              <div class="segmented">
-                <button class="seg" [class.is-active]="filtroTipo() === 'Todos'" (click)="setTipo('Todos')">Todos</button>
-                <button class="seg" [class.is-active]="filtroTipo() === 'Lisa'" (click)="setTipo('Lisa')">Lisa</button>
-                <button class="seg" [class.is-active]="filtroTipo() === 'Twill'" (click)="setTipo('Twill')">Twill</button>
-                <button class="seg" [class.is-active]="filtroTipo() === 'Reps'" (click)="setTipo('Reps')">Reps</button>
+
+          <!-- Tabla telas metálicas inox -->
+          <ng-container *ngIf="selectedProductoKey() === 'telas'">
+            <div class="filters">
+              <div class="field">
+                <label class="label">Subcategoría</label>
+                <div class="segmented">
+                  <button class="seg" [class.is-active]="filtroTipo() === 'Todos'" (click)="setTipo('Todos')">Todas</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 304'" (click)="setTipo('AISI 304')">AISI 304</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 316 / 316L'" (click)="setTipo('AISI 316 / 316L')">AISI 316 / 316L</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'Reps'" (click)="setTipo('Reps')">Reps</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'Acero negro'" (click)="setTipo('Acero negro')">Acero negro</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'Especiales 304'" (click)="setTipo('Especiales 304')">Especiales 304</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Buscar</label>
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="Ej: 14, 0.60, 12/90, 270..."
+                  [value]="filtroTexto()"
+                  (input)="onBuscar(($any($event.target).value))"
+                />
+                <div class="hint">
+                  Mostrando <strong>{{ filteredSpecs().length }}</strong> de <strong>{{ totalSpecs() }}</strong>.
+                </div>
               </div>
             </div>
 
-            <div class="field">
-              <label class="label">Buscar</label>
-              <input
-                class="input"
-                type="text"
-                placeholder="Ej: 14, 0.6, 0.158, 12/90..."
-                [value]="filtroTexto()"
-                (input)="onBuscar(($any($event.target).value))"
-              />
-              <div class="hint">
-                Mostrando <strong>{{ filteredSpecs().length }}</strong> de <strong>{{ totalSpecs() }}</strong>.
+            <div class="table-wrap" role="region" aria-label="Tabla de especificaciones" tabindex="0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Subcategoría</th>
+                    <th>Malla</th>
+                    <th>Ø alambre (mm)</th>
+                    <th>Luz (mm)</th>
+                    <th>Área abierta (%)</th>
+                    <th>Filtrado abs. (μm)</th>
+                    <th>Filtrado nom. (μm)</th>
+                    <th>Peso (kg/m²)</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let r of filteredSpecs()">
+                    <td>
+                      <span class="chip"
+                        [class.is-316]="r.tipo === 'AISI 316 / 316L'"
+                        [class.is-reps]="r.tipo === 'Reps'"
+                        [class.is-negro]="r.tipo === 'Acero negro'"
+                        [class.is-especial]="r.tipo === 'Especiales 304'">
+                        {{ r.tipo }}
+                      </span>
+                    </td>
+                    <td class="mono">{{ r.malla }}</td>
+                    <td class="mono">{{ r.diametroMm }}</td>
+                    <td class="mono">{{ r.luzMm || '—' }}</td>
+                    <td class="mono">{{ r.areaAbiertaPct || '—' }}</td>
+                    <td class="mono">{{ r.filtradoAbsolutouM || '—' }}</td>
+                    <td class="mono">{{ r.filtradoNominaluM || '—' }}</td>
+                    <td class="mono">{{ r.pesoKgM2 || '—' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="note">
+              * Reps y Acero negro expresan filtrado absoluto/nominal en μm en lugar de luz de malla estándar.
+            </div>
+          </ng-container>
+
+          <!-- Tabla tejido artístico -->
+          <ng-container *ngIf="selectedProductoKey() === 'artistico'">
+            <app-tejido-artistico></app-tejido-artistico>
+          </ng-container>
+
+          <!-- Especificaciones packos filtrantes -->
+          <ng-container *ngIf="selectedProductoKey() === 'packs'">
+            <p class="lead">Ofrecemos tanto soluciones estándar como configuraciones personalizadas, adaptadas a los requerimientos específicos de cada proceso industrial. Dos opciones de ensamblaje disponibles: con aro de aluminio o mediante soldadura por punto.</p>
+
+            <div class="ventajas-grid">
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Disponibilidad inmediata</div>
+                <div class="ventaja-card__text">Amplio stock de matrices para cortes de distintos diámetros, minimizando tiempos de espera y paradas de producción.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Resistencia superior</div>
+                <div class="ventaja-card__text">Materiales seleccionados específicamente para soportar condiciones extremas de presión, temperatura y desgaste en procesos continuos.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Precisión garantizada</div>
+                <div class="ventaja-card__text">Fabricación de alta precisión que asegura filtración óptima y consistente, mejorando la calidad del producto final.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Respaldo técnico experto</div>
+                <div class="ventaja-card__text">Soporte técnico con conocimiento profundo del rubro y soluciones efectivas adaptadas a tus necesidades.</div>
               </div>
             </div>
-          </div>
 
-          <div class="table-wrap" role="region" aria-label="Tabla de especificaciones" tabindex="0">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Malla</th>
-                  <th>Ø alambre (mm)</th>
-                  <th>Luz (mm)</th>
-                  <th>Área abierta (%)</th>
-                </tr>
-              </thead>
+            <div class="callout" style="margin-top: 18px;">
+              <div>
+                <div class="callout__title">¿Necesitás un packo a medida?</div>
+                <div class="callout__text">Indicanos diámetro, número de capas, material y tipo de ensamblaje (aro de aluminio o soldadura por punto).</div>
+              </div>
+              <button class="btn btn--primary" routerLink="/contacto">Consultar</button>
+            </div>
+          </ng-container>
 
-              <tbody>
-                <tr *ngFor="let r of filteredSpecs()">
-                  <td>
-                    <span class="chip" [class.is-twill]="r.tipo === 'Twill'" [class.is-reps]="r.tipo === 'Reps'">
-                      {{ r.tipo }}
-                    </span>
-                  </td>
-                  <td class="mono">{{ r.malla }}</td>
-                  <td class="mono">{{ r.diametroMm }}</td>
-                  <td class="mono">{{ r.luzMm }}</td>
-                  <td class="mono">{{ r.areaAbiertaPct || '—' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <!-- Especificaciones zarandas clasificatorias -->
+          <ng-container *ngIf="selectedProductoKey() === 'zarandas'">
+            <p class="lead">Fabricadas con alambre de aleación de acero que resiste la abrasión y el desgaste prematuro. Se proveen a medida en largo y ancho, con o sin borde de sujeción, recubierto o no de chapa.</p>
 
-          <div class="note">
-            * En algunos casos (Reps/Twill) la tabla fuente no incluye “malla” estándar o “área abierta”.
-          </div>
+            <div class="ventajas-grid">
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Fabricación a medida</div>
+                <div class="ventaja-card__text">Se proveen en largo y ancho según las dimensiones requeridas por el equipo zaranda. Sin restricciones de tamaño estándar.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Alta resistencia al desgaste</div>
+                <div class="ventaja-card__text">Fabricadas con alambre de aleación de acero especialmente seleccionado para resistir la abrasión y el desgaste prematuro en condiciones de uso intensivo.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Con o sin borde de sujeción</div>
+                <div class="ventaja-card__text">Pueden fabricarse con borde de sujeción recubierto o no de chapa, adaptándose a los distintos tipos de marcos y equipos.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Uso en diversas industrias</div>
+                <div class="ventaja-card__text">Aplicables en minería, construcción, áridos, agroindustria y reciclado. Fabricadas en planta industrial propia.</div>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top: 18px;">
+              <div>
+                <div class="callout__title">¿Necesitás una zaranda a medida?</div>
+                <div class="callout__text">Indicanos largo, ancho, apertura de malla, material y si requiere borde de sujeción para recibir una cotización.</div>
+              </div>
+              <button class="btn btn--primary" routerLink="/contacto">Consultar</button>
+            </div>
+          </ng-container>
+
+          <!-- Especificaciones discos filtrantes -->
+          <ng-container *ngIf="selectedProductoKey() === 'disco'">
+            <p class="lead">Contamos con un gran stock de matrices para cortes de discos para extrusión, de todos los diámetros. Fabricados en planta industrial propia. Consulte por fabricación en medidas especiales.</p>
+
+            <div class="ventajas-grid">
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Stock permanente</div>
+                <div class="ventaja-card__text">Amplio stock de matrices para todos los diámetros estándar, con disponibilidad inmediata para minimizar paradas de producción.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Medidas especiales</div>
+                <div class="ventaja-card__text">Fabricamos discos en diámetros fuera de lo estándar según los requerimientos específicos de cada equipo o proceso.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Uso en diversas industrias</div>
+                <div class="ventaja-card__text">Aplicables en extrusión de plásticos, industria alimenticia, química, petroquímica y cualquier proceso que requiera filtración por disco.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Fabricación propia</div>
+                <div class="ventaja-card__text">Producidos en planta industrial propia, garantizando control de calidad en cada etapa del proceso de fabricación.</div>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top: 18px;">
+              <div>
+                <div class="callout__title">¿Necesitás un disco a medida?</div>
+                <div class="callout__text">Indicanos el diámetro, material, apertura de malla y cantidad requerida para recibir una cotización.</div>
+              </div>
+              <button class="btn btn--primary" routerLink="/contacto">Consultar</button>
+            </div>
+          </ng-container>
+
         </section>
 
         <!-- TAB: USOS -->
