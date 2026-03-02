@@ -104,7 +104,7 @@
           </p>
 
           <div class="info-grid">
-            <div class="info">
+            <div class="info" *ngIf="selectedProductoKey() !== 'disco'">
               <div class="info__label">Anchos disponibles</div>
               <div class="info__value">
                 <span class="pill" *ngFor="let a of productoActual().anchosDisponiblesMm">{{ a }} mm</span>
@@ -113,13 +113,16 @@
 
             <div class="info">
               <div class="info__label">Cómo pedir presupuesto</div>
-              <div class="info__value">
+              <div class="info__value" *ngIf="selectedProductoKey() !== 'coalescedora'">
                 Indicá <strong>número de malla</strong>, <strong>Ø de alambre</strong>, <strong>ancho</strong> y material (304/316).
+              </div>
+              <div class="info__value" *ngIf="selectedProductoKey() === 'coalescedora'">
+                Indicá <strong>ancho requerido</strong> (100 a 150 mm o especiales) y <strong>material</strong> (galvanizado, inoxidable o cobre).
               </div>
             </div>
           </div>
 
-          <div class="callout">
+          <div class="callout" *ngIf="selectedProductoKey() === 'telas' || selectedProductoKey() === 'artistico'">
             <div>
               <div class="callout__title">Tip rápido</div>
               <div class="callout__text">
@@ -140,11 +143,10 @@
                 <label class="label">Subcategoría</label>
                 <div class="segmented">
                   <button class="seg" [class.is-active]="filtroTipo() === 'Todos'" (click)="setTipo('Todos')">Todas</button>
-                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 304'" (click)="setTipo('AISI 304')">AISI 304</button>
-                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 316 / 316L'" (click)="setTipo('AISI 316 / 316L')">AISI 316 / 316L</button>
-                  <button class="seg" [class.is-active]="filtroTipo() === 'Reps'" (click)="setTipo('Reps')">Reps</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 304'" (click)="setTipo('AISI 304')">AISI 304 (Lisas)</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'AISI 316 / 316L'" (click)="setTipo('AISI 316 / 316L')">AISI 316 / 316L (Lisas)</button>
+                  <button class="seg" [class.is-active]="filtroTipo() === 'Reps'" (click)="setTipo('Reps')">REEPS (304 / 316)</button>
                   <button class="seg" [class.is-active]="filtroTipo() === 'Acero negro'" (click)="setTipo('Acero negro')">Acero negro</button>
-                  <button class="seg" [class.is-active]="filtroTipo() === 'Especiales 304'" (click)="setTipo('Especiales 304')">Especiales 304</button>
                 </div>
               </div>
 
@@ -184,8 +186,7 @@
                       <span class="chip"
                         [class.is-316]="r.tipo === 'AISI 316 / 316L'"
                         [class.is-reps]="r.tipo === 'Reps'"
-                        [class.is-negro]="r.tipo === 'Acero negro'"
-                        [class.is-especial]="r.tipo === 'Especiales 304'">
+                        [class.is-negro]="r.tipo === 'Acero negro'">
                         {{ r.tipo }}
                       </span>
                     </td>
@@ -202,7 +203,8 @@
             </div>
 
             <div class="note">
-              * Reps y Acero negro expresan filtrado absoluto/nominal en μm en lugar de luz de malla estándar.
+              * Todas las telas lisas (AISI 304 y AISI 316 / 316L) y las REEPS se fabrican en ambas calidades: <strong>AISI 304</strong> y <strong>AISI 316 / 316L</strong>. Consultenos por la calidad requerida.<br>
+              * REEPS y Acero negro expresan filtrado absoluto/nominal en μm en lugar de luz de malla estándar.
             </div>
           </ng-container>
 
@@ -237,7 +239,13 @@
             <div class="callout" style="margin-top: 18px;">
               <div>
                 <div class="callout__title">¿Necesitás un packo a medida?</div>
-                <div class="callout__text">Indicanos diámetro, número de capas, material y tipo de ensamblaje (aro de aluminio o soldadura por punto).</div>
+                <div class="callout__text">
+                  Indicanos: <strong>diámetro</strong>, <strong>número de capas</strong>, <strong>material</strong> y el <strong>tipo de sujeción de los discos</strong>:
+                  <ul style="margin: 8px 0 0 16px; padding: 0;">
+                    <li><strong>Puntos de soldadura</strong> — definir cantidad de puntos.</li>
+                    <li><strong>Aros en el contorno</strong>.</li>
+                  </ul>
+                </div>
               </div>
               <button class="btn btn--primary" routerLink="/contacto">Consultar</button>
             </div>
@@ -307,6 +315,38 @@
             </div>
           </ng-container>
 
+          <!-- Especificaciones malla filtrante coalescedora -->
+          <ng-container *ngIf="selectedProductoKey() === 'coalescedora'">
+            <p class="lead">La malla filtrante coalescedora es el elemento filtrante del demister. Puede fabricarse con alambre de hierro galvanizado, acero inoxidable (AISI 304 / 316) o cobre. Anchos desde 100 mm hasta 150 mm; consultar por fabricación en anchos especiales.</p>
+
+            <div class="ventajas-grid">
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Múltiples materiales</div>
+                <div class="ventaja-card__text">Disponible en hierro galvanizado, acero inoxidable AISI 304 / 316 o cobre, según el proceso y las condiciones de trabajo.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Uso en demisters</div>
+                <div class="ventaja-card__text">Elemento filtrante estándar para demisters y separadores de niebla en aplicaciones petroquímicas, refinerías e industria química.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Anchos estándar y especiales</div>
+                <div class="ventaja-card__text">Fabricación desde 100 mm hasta 150 mm de ancho; consultar por anchos especiales a medida.</div>
+              </div>
+              <div class="ventaja-card">
+                <div class="ventaja-card__title">Coalescencia y separación</div>
+                <div class="ventaja-card__text">Ideal para coalescencia de gotas en gases y separación líquido-gas en torres y columnas de proceso.</div>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top: 18px;">
+              <div>
+                <div class="callout__title">¿Necesitás malla coalescedora?</div>
+                <div class="callout__text">Indicanos ancho requerido (100 a 150 mm o especiales), material (galvanizado, inoxidable o cobre) y aplicación para recibir una cotización. Para especificaciones técnicas detalladas, consultá con nuestro asesor.</div>
+              </div>
+              <button class="btn btn--primary" routerLink="/contacto">Consultar</button>
+            </div>
+          </ng-container>
+
         </section>
 
         <!-- TAB: USOS -->
@@ -319,10 +359,16 @@
               </ul>
 
               <h3 class="h3">Qué información necesitás definir</h3>
-              <ul class="bullets">
+              <ul class="bullets" *ngIf="selectedProductoKey() !== 'coalescedora'">
                 <li>Material (AISI 304 o 316)</li>
-                <li>Ancho requerido (1000 / 1220 / 1300 / 1600 mm)</li>
+                <li *ngIf="selectedProductoKey() !== 'disco'">Ancho requerido (1000 / 1220 / 1300 / 1600 mm)</li>
+                <li *ngIf="selectedProductoKey() === 'disco'">Diámetro requerido</li>
                 <li>Número de malla y Ø de alambre</li>
+                <li *ngIf="selectedProductoKey() === 'disco'">Cantidad requerida</li>
+              </ul>
+              <ul class="bullets" *ngIf="selectedProductoKey() === 'coalescedora'">
+                <li>Material (hierro galvanizado, acero inoxidable AISI 304/316 o cobre)</li>
+                <li>Ancho requerido (100 a 150 mm; consultar por anchos especiales)</li>
               </ul>
             </div>
 

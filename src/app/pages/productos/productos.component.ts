@@ -3,13 +3,12 @@ import { Component, computed, signal } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { TejidoArtisticoComponent } from 'src/app/components/tejido-artistico/tejido-artistico.component';
 
-type ProductoKey = 'telas' | 'artistico' | 'disco' | 'packs' | 'zarandas';
+type ProductoKey = 'telas' | 'artistico' | 'disco' | 'packs' | 'zarandas' | 'coalescedora';
 type TipoMalla =
   | 'AISI 304'
   | 'AISI 316 / 316L'
   | 'Reps'
-  | 'Acero negro'
-  | 'Especiales 304';
+  | 'Acero negro';
 
 interface MeshSpecInox {
   tipo: TipoMalla;
@@ -65,6 +64,12 @@ export class ProductosComponent {
       title: 'Zarandas clasificatorias',
       subtitle: 'Fabricadas a medida en largo y ancho',
       img: '../../assets/img/img9.png',
+    },
+    {
+      key: 'coalescedora' as const,
+      title: 'Malla filtrante coalescedora',
+      subtitle: 'Elemento filtrante del demister',
+      img: '../../assets/img/img10.png',
     },
   ];
 
@@ -157,14 +162,31 @@ export class ProductosComponent {
     ],
   };
 
+  readonly productoCoalescedora = {
+    nombre: 'Malla filtrante coalescedora',
+    subtitulo: 'Elemento filtrante del demister',
+    descripcion:
+      'La malla filtrante coalescedora es el elemento filtrante del demister. Se fabrica con alambre de hierro galvanizado, acero inoxidable (AISI 304 / 316) o cobre. El ancho a fabricar puede ser desde 100 mm hasta 150 mm. Consulte por fabricación en anchos especiales.',
+    anchosDisponiblesMm: ['100 - 150'],
+    materiales: ['Hierro galvanizado', 'AISI 304 / 316', 'Cobre'],
+    usos: [
+      'Demisters y separadores de niebla',
+      'Coalescencia de gotas en gases',
+      'Filtrado en procesos petroquímicos y refinerías',
+      'Separación líquido-gas en torres y columnas',
+      'Industria química y petrolera',
+    ],
+  };
+
   readonly productoActual = computed(() => {
     const key = this.selectedProductoKey();
     switch (key) {
-      case 'telas':     return this.productoTelas;
-      case 'artistico': return this.productoArtistico;
-      case 'disco':     return this.productoDisco;
-      case 'packs':     return this.productoPacks;
-      case 'zarandas':  return this.productoZarandas;
+      case 'telas':        return this.productoTelas;
+      case 'artistico':    return this.productoArtistico;
+      case 'disco':        return this.productoDisco;
+      case 'packs':        return this.productoPacks;
+      case 'zarandas':     return this.productoZarandas;
+      case 'coalescedora': return this.productoCoalescedora;
     }
   });
 
@@ -234,11 +256,11 @@ export class ProductosComponent {
     // --- Acero negro ---
     { tipo: 'Acero negro', malla: '12/90',  diametroMm: '0.40/0.30', luzMm: '—', filtradoAbsolutouM: '270–300', filtradoNominaluM: '211', pesoKgM2: '2.50' },
     { tipo: 'Acero negro', malla: '24/110', diametroMm: '0.35/0.25', luzMm: '—', filtradoAbsolutouM: '115–128', filtradoNominaluM: '110', pesoKgM2: '2.27' },
-    // --- Especiales AISI 304 ---
-    { tipo: 'Especiales 304', malla: '2',   diametroMm: '1.25', luzMm: '2.00', areaAbiertaPct: '81.28', pesoKgM2: '6.13' },
-    { tipo: 'Especiales 304', malla: '2.5', diametroMm: '1.25', luzMm: '2.50', areaAbiertaPct: '76.91', pesoKgM2: '5.53' },
-    { tipo: 'Especiales 304', malla: '3',   diametroMm: '1.25', luzMm: '3.00', areaAbiertaPct: '72.65', pesoKgM2: '4.88' },
-    { tipo: 'Especiales 304', malla: '3',   diametroMm: '1.50', luzMm: '3.00', areaAbiertaPct: '67.72', pesoKgM2: '7.02' },
+    // --- AISI 304 (especiales) ---
+    { tipo: 'AISI 304', malla: '2',   diametroMm: '1.25', luzMm: '2.00', areaAbiertaPct: '81.28', pesoKgM2: '6.13' },
+    { tipo: 'AISI 304', malla: '2.5', diametroMm: '1.25', luzMm: '2.50', areaAbiertaPct: '76.91', pesoKgM2: '5.53' },
+    { tipo: 'AISI 304', malla: '3',   diametroMm: '1.25', luzMm: '3.00', areaAbiertaPct: '72.65', pesoKgM2: '4.88' },
+    { tipo: 'AISI 304', malla: '3',   diametroMm: '1.50', luzMm: '3.00', areaAbiertaPct: '67.72', pesoKgM2: '7.02' },
   ]
 
   readonly totalSpecs = computed(() => {

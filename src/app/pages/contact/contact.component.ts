@@ -17,18 +17,18 @@ type HorarioItem = {
 })
 export class ContactComponent {
   // Mostrado en la UI
-  readonly phoneDisplay = '11 1234-5678';
+  readonly phoneDisplay = '+54 9 11 7000-7600';
 
   // WhatsApp en formato internacional (sin +, sin espacios)
-  readonly whatsappNumber = '541112345678';
+  readonly whatsappNumber = '5491170007600';
 
   // Email de contacto
-  readonly email = 'ventas@sprintel.com.ar';
+  readonly email = 'informes@sprintel.com.ar';
 
   // Horario (lo que te faltaba)
   readonly horario: HorarioItem[] = [
     { dia: 'Lunes a Viernes', hora: '09:00 a 18:00' },
-    { dia: 'Sábados', hora: '09:00 a 13:00' },
+    { dia: 'Sábados', hora: 'Cerrado' },
     { dia: 'Domingos', hora: 'Cerrado' },
   ];
 
